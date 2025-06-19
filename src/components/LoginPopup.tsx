@@ -37,23 +37,32 @@ export const LoginPopup = ({ isOpen, onClose, onSignupClick }: Props) => {
   useEffect(() => {
     if (isOpen) {
       // Initialize reCAPTCHA verifier when popup opens
-      if (!window.recaptchaVerifier) {
-        window.recaptchaVerifier = new RecaptchaVerifier(
-          auth,
-          'recaptcha-container',
-          {
-            size: 'invisible',
-            callback: (response: any) => {
-              // reCAPTCHA solved, allow send OTP
-              console.log('reCAPTCHA solved');
-            },
-            'expired-callback': () => {
-              // Reset reCAPTCHA?
-              console.log('reCAPTCHA expired');
-            },
+      // Always re-initialize to avoid stale element reference
+      if (window.recaptchaVerifier) {
+        window.recaptchaVerifier.clear();
+        window.recaptchaVerifier = null;
+      }
+      window.recaptchaVerifier = new RecaptchaVerifier(
+        auth,
+        'recaptcha-container',
+        {
+          size: 'invisible',
+          callback: (response: any) => {
+            // reCAPTCHA solved, allow send OTP
+            console.log('reCAPTCHA solved');
           },
-          // auth as Auth
-        );
+          'expired-callback': () => {
+            // Reset reCAPTCHA?
+            console.log('reCAPTCHA expired');
+          },
+        },
+        // auth as Auth
+      );
+    } else {
+      // Cleanup recaptchaVerifier when popup closes
+      if (window.recaptchaVerifier) {
+        window.recaptchaVerifier.clear();
+        window.recaptchaVerifier = null;
       }
     }
   }, [isOpen]);
