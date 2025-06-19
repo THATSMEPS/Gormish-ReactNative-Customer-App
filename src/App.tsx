@@ -399,7 +399,7 @@ function MainApp({ customerId }: { customerId: string | null }) {
             document.cookie = 'auth_token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
             localStorage.clear();
             // Redirect to Flutter login page after sign out
-            window.location.href = 'myflutterapp://login'; // Replace with actual Flutter login URL or scheme
+          window.location.href = '/'; // Redirect to frontend home page which shows login popup
           }}
         />
       
