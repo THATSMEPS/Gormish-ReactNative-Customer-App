@@ -1,0 +1,4 @@
+/* Navbar specific styles */
+.navbar {
+  @apply flex justify-between items-center px-4 py-2;
+}
