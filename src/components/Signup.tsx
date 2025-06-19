@@ -191,7 +191,7 @@ export const Signup = ({ onSignupSuccess, onCancel, isOpen }: SignupProps) => {
                       <button
                         onClick={handleSendOtp}
                         disabled={isLoading}
-                        className="w-full bg-indigo-600 text-white py-2 rounded-full hover:bg-indigo-700 disabled:opacity-50 transition-colors duration-200"
+                        className="w-1/2 mx-auto bg-indigo-600 text-white py-2 rounded-full hover:bg-indigo-700 disabled:opacity-50 transition-colors duration-200"
                       >
                         {isLoading ? 'Sending OTP...' : 'Complete Signup'}
                       </button>
@@ -207,17 +207,17 @@ export const Signup = ({ onSignupSuccess, onCancel, isOpen }: SignupProps) => {
                       <p className="mb-3">Enter the 6-digit OTP sent to {email}</p>
                       <input
                         type="text"
-                        placeholder="OTP"
+                        placeholder="Enter OTP"
                         value={otp}
                         onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
                         maxLength={6}
-                        className="w-full mb-3 p-2 rounded-full border border-gray-300 text-black text-center tracking-widest text-lg"
+                        className="w-full mb-3 p-2 border-b-2 border-gray-400 text-black text-center tracking-widest text-lg focus:outline-none focus:border-indigo-600 bg-transparent"
                       />
                       {errorMessage && <p className="text-red-500 mb-3">{errorMessage}</p>}
                       <button
                         onClick={handleVerifyOtp}
                         disabled={isLoading}
-                        className="w-full bg-indigo-600 text-white py-2 rounded-full hover:bg-indigo-700 disabled:opacity-50 transition-colors duration-200"
+                        className="w-1/2 mx-auto bg-indigo-600 text-white py-2 rounded-full hover:bg-indigo-700 disabled:opacity-50 transition-colors duration-200"
                       >
                         {isLoading ? 'Verifying OTP...' : 'Verify OTP'}
                       </button>

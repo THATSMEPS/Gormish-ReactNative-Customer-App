@@ -220,19 +220,40 @@ export const LoginPopup = ({ isOpen, onClose, onSignupClick }: Props) => {
                   </>
                 ) : (
                   <>
-                    <input
-                      type="text"
-                      placeholder="Enter OTP"
-                      value={otp}
-                      onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                      maxLength={6}
-                      className="w-full mb-3 p-2 rounded text-black text-center tracking-widest text-lg"
-                    />
+                    <div className="flex justify-center space-x-4 mb-3">
+                      {[...Array(6)].map((_, index) => (
+                        <input
+                          key={index}
+                          type="text"
+                          inputMode="numeric"
+                          maxLength={1}
+                          className="w-10 border-b-2 border-white/70 bg-transparent text-white text-center text-lg focus:outline-none focus:border-white"
+                          value={otp[index] || ''}
+                          onChange={(e) => {
+                            const val = e.target.value.replace(/\D/g, '');
+                            if (!val) return;
+                            const newOtp = otp.split('');
+                            newOtp[index] = val[0];
+                            setOtp(newOtp.join('').slice(0, 6));
+                            // Move focus to next input
+                            const nextInput = e.target.nextElementSibling as HTMLInputElement | null;
+                            if (nextInput) nextInput.focus();
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Backspace' && !otp[index] && index > 0) {
+                              const target = e.target as HTMLInputElement;
+                              const prevInput = target.previousElementSibling as HTMLInputElement | null;
+                              if (prevInput) prevInput.focus();
+                            }
+                          }}
+                        />
+                      ))}
+                    </div>
                     {errorMessage && <p className="text-red-500 mb-3">{errorMessage}</p>}
                     <button
                       onClick={handleVerifyOtp}
                       disabled={isLoading}
-                      className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 disabled:opacity-50"
+                      className="w-1/2 mx-auto bg-indigo-600 text-white py-2 rounded-full hover:bg-indigo-700 disabled:opacity-50"
                     >
                       {isLoading ? 'Verifying OTP...' : 'Verify OTP'}
                     </button>
