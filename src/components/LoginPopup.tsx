@@ -23,6 +23,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://gormishbacken
 
 export const LoginPopup = ({ isOpen, onClose, onSignupClick }: Props) => {
   const [phone, setPhone] = useState('');
+  const [countryCode, setCountryCode] = useState('+91');
   const [otpSent, setOtpSent] = useState(false);
   const [otp, setOtp] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -71,7 +72,7 @@ export const LoginPopup = ({ isOpen, onClose, onSignupClick }: Props) => {
       if (data.success && data.data && data.data.phone_exist === true) {
         // Send OTP via Firebase
         const appVerifier = window.recaptchaVerifier;
-        const formattedPhone = '+91' + phone; // Adjust country code as needed
+        const formattedPhone = countryCode + phone; // Adjust country code as needed
         const result = await signInWithPhoneNumber(auth, formattedPhone, appVerifier);
         setConfirmationResult(result);
         setOtpSent(true);
@@ -151,7 +152,7 @@ export const LoginPopup = ({ isOpen, onClose, onSignupClick }: Props) => {
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
-            className="relative bg-[#6552FF]/80 backdrop-blur-xl rounded-[30px] p-8 w-full max-w-md text-white shadow-[0_8px_32px_0_rgba(31,38,135,0.37)] border border-white/20"
+            className="relative bg-[#6552FF]/80 backdrop-blur-xl rounded-[30px] p-6 w-full max-w-sm text-white shadow-[0_8px_32px_0_rgba(31,38,135,0.37)] border border-white/20"
             style={{
               WebkitBackdropFilter: 'blur(8px)',
               backdropFilter: 'blur(8px)',
@@ -166,35 +167,30 @@ export const LoginPopup = ({ isOpen, onClose, onSignupClick }: Props) => {
                 Login To Order
               </h2>
 
-              <div className="space-y-6 flex flex-col items-center">
+              <div className="space-y-4 flex flex-col items-center">
                 {!otpSent ? (
                   <>
-                    <input
-                      type="text"
-                      placeholder="Phone Number"
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
-                      maxLength={10}
-                      className="w-full mb-3 p-2 rounded-full border border-gray-300 text-black focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                    />
+                    <div className="flex items-center w-full max-w-sm mb-3 rounded-full border border-gray-300 focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-indigo-500 overflow-hidden bg-white">
+                      <select
+                        value={countryCode}
+                        onChange={(e) => setCountryCode(e.target.value)}
+                        className="bg-white text-black rounded-l-full px-4 py-2 outline-none cursor-pointer border-r border-gray-300"
+                        aria-label="Select country code"
+                      >
+                        <option value="+91">🇮🇳 +91</option>
+                      </select>
+                      <input
+                        type="text"
+                        placeholder="Phone Number"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
+                        maxLength={10}
+                        className="flex-grow p-2 rounded-r-full border-none text-black focus:outline-none"
+                      />
+                    </div>
                     {errorMessage && (
                       <>
-                        <p className="text-red-500 mb-3">{errorMessage}</p>
-                        {errorMessage === 'Phone number not registered. Please signup first.' && (
-                          <p
-                            className="text-blue-400 cursor-pointer underline mb-3"
-                            onClick={onSignupClick}
-                            role="button"
-                            tabIndex={0}
-                            onKeyDown={(e) => {
-                              if (e.key === 'Enter' || e.key === ' ') {
-                                onSignupClick();
-                              }
-                            }}
-                          >
-                            Signup here
-                          </p>
-                        )}
+                        <p className="text-white/70 mb-3">{errorMessage}</p>
                       </>
                     )}
                     <button
