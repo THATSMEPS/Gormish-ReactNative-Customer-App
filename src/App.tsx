@@ -101,7 +101,16 @@ const OrderHistoryRouteWrapper = () => {
   return <OrderHistory onBack={() => navigate('/')} />;
 };
 
-function MainApp({ customerId }: { customerId: string | null }) {
+function MainApp({ customerId, isAuthenticated, showLoginPopup, setShowLoginPopup, showSignupPopup, setShowSignupPopup, setIsAuthenticated, setCurrentCustomerId }: {
+  customerId: string | null;
+  isAuthenticated: boolean;
+  showLoginPopup: boolean;
+  setShowLoginPopup: (v: boolean) => void;
+  showSignupPopup: boolean;
+  setShowSignupPopup: (v: boolean) => void;
+  setIsAuthenticated: (v: boolean) => void;
+  setCurrentCustomerId: (v: string | null) => void;
+}) {
   const navigate = useNavigate();
   const { scrollY } = useScroll();
   
@@ -353,8 +362,17 @@ function MainApp({ customerId }: { customerId: string | null }) {
     setAppSearchText('');
   }, []);
 
+  // Set a default area if not authenticated
+  useEffect(() => {
+    if (!customerId && (!selectedArea || selectedArea === ' ')) {
+      setSelectedArea('Navrangpura');
+      localStorage.setItem('selectedArea', 'Navrangpura');
+    }
+  }, [customerId, selectedArea]);
+
   return (
-    <div className="min-h-screen bg-[#F2F2F5]">
+    <div className="relative min-h-screen">
+      {/* Main page content */}
       {/* Phone Number Popup */}
       {customerId && ( // Only render if customerId is available
         <PhonePopup
@@ -433,90 +451,12 @@ function MainApp({ customerId }: { customerId: string | null }) {
         }}
         searchText={appSearchText} 
       />
-    </div>
-  );
-}
-
-function AuthenticatedApp() {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [showLoginPopup, setShowLoginPopup] = useState(false);
-  const [showSignupPopup, setShowSignupPopup] = useState(false);
-  const [currentCustomerId, setCurrentCustomerId] = useState<string | null>(null);
-
-  const location = useLocation();
-  const embedded = new URLSearchParams(location.search).get('embedded') === 'true';
-
-  useEffect(() => {
-    // const getCookie = (name: string): string | null => {
-    //   const value = `; ${document.cookie}`;
-    //   const parts = value.split(`; ${name}=`);
-    //   if (parts.length === 2) return parts.pop()!.split(';').shift() || null;
-    //   return null;
-    // };
-
-    const checkAuthToken = () => {
-      let token = localStorage.getItem('authToken');
-      const storedCustomerData = localStorage.getItem('customerData');
-      let customerIdFromStorage: string | null = null;
-
-      if (storedCustomerData) {
-        try {
-          const parsedCustomer = JSON.parse(storedCustomerData);
-          if (parsedCustomer && parsedCustomer.id) {
-            customerIdFromStorage = parsedCustomer.id;
-          }
-        } catch (e) {
-          console.error("Error parsing customerData from localStorage:", e);
-        }
-      } else {
-        // Fallback: check if customerId is stored separately
-        const separateCustomerId = localStorage.getItem('customerId');
-        if (separateCustomerId) {
-          customerIdFromStorage = separateCustomerId;
-        }
-      }
-
-      // Removed cookie fallback for auth token to avoid overwriting localStorage with empty cookies
-      // if (!token) {
-      //   const cookieToken = getCookie('auth_token');
-      //   if (cookieToken) {
-      //     token = cookieToken;
-      //     localStorage.setItem('authToken', token);
-      //     console.log("Auth token retrieved from cookie and stored in localStorage.");
-      //   }
-      // }
-
-      if (token && customerIdFromStorage) {
-        setIsAuthenticated(true);
-        setShowLoginPopup(false);
-        setShowSignupPopup(false);
-        setCurrentCustomerId(customerIdFromStorage);
-        console.log("AuthToken found. User is authenticated. Customer ID:", customerIdFromStorage);
-      } else {
-        setIsAuthenticated(false);
-        setShowLoginPopup(true);
-        setShowSignupPopup(false);
-        setCurrentCustomerId(null);
-        console.log("No AuthToken found or customer ID missing. Opening Login Popup.");
-      }
-    };
-    checkAuthToken();
-
-    const handleStorageChange = () => {
-      checkAuthToken();
-    };
-    window.addEventListener('storage', handleStorageChange);
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-    };
-  }, []);
-
-  if (!isAuthenticated && !embedded) {
-    return (
-      // <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+      {/* Overlay and Login/Signup Popups */}
+      {showLoginPopup && (
         <>
+          <div className="fixed inset-0 z-50 bg-black/30 backdrop-blur-[3.5px]" style={{ pointerEvents: 'auto' }} />
           <LoginPopup
-            isOpen={showLoginPopup}
+            isOpen={true}
             onClose={() => {
               const token = localStorage.getItem('authToken');
               const storedCustomerData = localStorage.getItem('customerData');
@@ -531,15 +471,12 @@ function AuthenticatedApp() {
                   console.error("Error parsing customerData on popup close:", e);
                 }
               }
-
               if (token && customerIdFromStorage) {
                 setIsAuthenticated(true);
                 setShowLoginPopup(false);
                 setShowSignupPopup(false);
                 setCurrentCustomerId(customerIdFromStorage);
-                console.log("App.tsx (LoginPopup onClose callback): Authenticated, closing popup.");
               } else {
-                console.log("App.tsx (LoginPopup onClose callback): AuthToken or Customer ID not found after popup close attempt. Keeping Login Popup open.");
                 setShowLoginPopup(true);
               }
             }}
@@ -547,33 +484,95 @@ function AuthenticatedApp() {
               setShowLoginPopup(false);
               setShowSignupPopup(true);
             }}
-            embedded={embedded}
-          />
-          <Signup
-            onSignupSuccess={() => {
-              setShowSignupPopup(false);
-              setShowLoginPopup(true);
-            }}
-            onCancel={() => {
-              setShowSignupPopup(false);
-              setShowLoginPopup(true);
-            }}
-            isOpen={showSignupPopup}
           />
         </>
-      // </GoogleOAuthProvider>
-    );
-  }
+      )}
+      {showSignupPopup && (
+        <Signup
+          onSignupSuccess={() => {
+            setShowSignupPopup(false);
+            setShowLoginPopup(true);
+          }}
+          onCancel={() => {
+            setShowSignupPopup(false);
+            setShowLoginPopup(true);
+          }}
+          isOpen={showSignupPopup}
+        />
+      )}
+    </div>
+  );
+}
+
+function AuthenticatedApp() {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [showLoginPopup, setShowLoginPopup] = useState(false);
+  const [showSignupPopup, setShowSignupPopup] = useState(false);
+  const [currentCustomerId, setCurrentCustomerId] = useState<string | null>(null);
+
+  const location = useLocation();
+  const embedded = new URLSearchParams(location.search).get('embedded') === 'true';
+
+  useEffect(() => {
+    const checkAuthToken = () => {
+      let token = localStorage.getItem('authToken');
+      const storedCustomerData = localStorage.getItem('customerData');
+      let customerIdFromStorage: string | null = null;
+      if (storedCustomerData) {
+        try {
+          const parsedCustomer = JSON.parse(storedCustomerData);
+          if (parsedCustomer && parsedCustomer.id) {
+            customerIdFromStorage = parsedCustomer.id;
+          }
+        } catch (e) {
+          console.error("Error parsing customerData from localStorage:", e);
+        }
+      } else {
+        const separateCustomerId = localStorage.getItem('customerId');
+        if (separateCustomerId) {
+          customerIdFromStorage = separateCustomerId;
+        }
+      }
+      if (token && customerIdFromStorage) {
+        setIsAuthenticated(true);
+        setShowLoginPopup(false);
+        setShowSignupPopup(false);
+        setCurrentCustomerId(customerIdFromStorage);
+      } else {
+        setIsAuthenticated(false);
+        setShowLoginPopup(true);
+        setShowSignupPopup(false);
+        setCurrentCustomerId(null);
+      }
+    };
+    checkAuthToken();
+    const handleStorageChange = () => {
+      checkAuthToken();
+    };
+    window.addEventListener('storage', handleStorageChange);
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
 
   return (
-    // <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
-      <Routes>
-        <Route path="/" element={<MainApp customerId={currentCustomerId} />} /> 
-        <Route path="/:restaurantId" element={<RestaurantPageWrapper />} />
-        <Route path="/order/:orderId" element={<OrderTrackingScreen />} />
-        <Route path="/orders" element={<OrderHistoryRouteWrapper />} /> 
-      </Routes>
-    // </GoogleOAuthProvider>
+    <Routes>
+      <Route path="/" element={
+        <MainApp
+          customerId={currentCustomerId}
+          isAuthenticated={isAuthenticated}
+          showLoginPopup={showLoginPopup}
+          setShowLoginPopup={setShowLoginPopup}
+          showSignupPopup={showSignupPopup}
+          setShowSignupPopup={setShowSignupPopup}
+          setIsAuthenticated={setIsAuthenticated}
+          setCurrentCustomerId={setCurrentCustomerId}
+        />
+      } />
+      <Route path="/:restaurantId" element={<RestaurantPageWrapper />} />
+      <Route path="/order/:orderId" element={<OrderTrackingScreen />} />
+      <Route path="/orders" element={<OrderHistoryRouteWrapper />} />
+    </Routes>
   );
 }
 

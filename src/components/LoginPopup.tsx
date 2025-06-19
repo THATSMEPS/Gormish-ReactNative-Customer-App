@@ -146,16 +146,16 @@ export const LoginPopup = ({ isOpen, onClose, onSignupClick }: Props) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm"
+            className="absolute inset-0 bg-black bg-opacity-40 backdrop-blur-none"
           />
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
-            className="relative bg-[#6552FF]/80 backdrop-blur-xl rounded-[30px] p-6 w-full max-w-sm text-white shadow-[0_8px_32px_0_rgba(31,38,135,0.37)] border border-white/20"
+            className="relative bg-[#6552FF]/80 backdrop-blur-none rounded-[30px] p-6 w-full max-w-sm text-white shadow-[0_8px_32px_0_rgba(31,38,135,0.37)] border border-white/20"
             style={{
-              WebkitBackdropFilter: 'blur(8px)',
-              backdropFilter: 'blur(8px)',
+              WebkitBackdropFilter: 'none',
+              backdropFilter: 'none',
             }}
           >
             <motion.div
