@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Restaurant } from '../types/restaurant.types'; 
 import { RestaurantCard } from './RestaurantCard';
 import { fetchRestaurants } from '../apis/restaurant.api';
+import { fetchCustomerById } from '../apis/customer.api'; // Import fetchCustomerById
 
 interface Props {
   selectedArea: string;
@@ -17,6 +18,11 @@ export const RestaurantGrid = ({ selectedArea, selectedCategory, onRestaurantCli
   
   const [allRestaurants, setAllRestaurants] = useState<(Restaurant & { isCurrentlyOpen: boolean })[]>([]);
   const [filteredData, setFilteredData] = useState<(Restaurant & { isCurrentlyOpen: boolean })[]>([]);
+
+  // New state for customer details
+  const [customerDetails, setCustomerDetails] = useState<any>(null);
+  const [customerLoading, setCustomerLoading] = useState(false);
+  const [customerError, setCustomerError] = useState<string | null>(null);
 
   const checkRestaurantIsOpen = (restaurant: Restaurant): boolean => {
     if (typeof restaurant.isOpen === 'boolean') {
@@ -53,6 +59,40 @@ export const RestaurantGrid = ({ selectedArea, selectedCategory, onRestaurantCli
     };
 
     getRestaurants();
+  }, []);
+
+  // New useEffect to fetch customer details after login/signup
+  useEffect(() => {
+    const fetchCustomerDetails = async () => {
+      setCustomerLoading(true);
+      setCustomerError(null);
+      try {
+        const customerDataString = localStorage.getItem('customerData');
+        if (!customerDataString) {
+          setCustomerLoading(false);
+          return;
+        }
+        const customerData = JSON.parse(customerDataString);
+        if (!customerData || !customerData.id) {
+          setCustomerLoading(false);
+          return;
+        }
+        const response = await fetchCustomerById(customerData.id);
+        if (!response.success) {
+          throw new Error(response.message);
+        }
+        setCustomerDetails(response.data);
+        // Update localStorage with fresh customer data
+        localStorage.setItem('customerData', JSON.stringify(response.data));
+      } catch (err) {
+        console.error("Error fetching customer details:", err);
+        setCustomerError(err instanceof Error ? err.message : 'Failed to fetch customer details');
+      } finally {
+        setCustomerLoading(false);
+      }
+    };
+
+    fetchCustomerDetails();
   }, []);
 
   // This useEffect now handles filtering based on selectedArea, selectedCategory (which can be a cuisine filter), and searchText

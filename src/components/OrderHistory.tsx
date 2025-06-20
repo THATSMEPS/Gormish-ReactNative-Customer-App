@@ -147,9 +147,9 @@ export const OrderHistory = ({ onBack }: Props) => {
 
   
   let CUSTOMER_ID: string = "";
-  const localStorageCustomerId = localStorage.getItem('customerId')
+  const localStorageCustomerId = localStorage.getItem('customerData')
   if(localStorageCustomerId) {
-    CUSTOMER_ID = localStorageCustomerId
+    CUSTOMER_ID = (JSON.parse(localStorageCustomerId)).id
   }
 
   const getCustomerData = async () => {
