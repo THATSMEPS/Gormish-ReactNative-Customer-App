@@ -129,6 +129,10 @@ export const LoginPopup = ({ isOpen, onClose, onSignupClick }: Props) => {
         }
         if (verifyData.data && verifyData.data.user) {
           localStorage.setItem('customerData', JSON.stringify(verifyData.data.user));
+          // Store customerId separately in localStorage
+          if (verifyData.data.user.id) {
+            localStorage.setItem('customerId', verifyData.data.user.id);
+          }
         }
         // Login success, close popup
         onClose();
