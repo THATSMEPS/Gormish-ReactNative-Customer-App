@@ -292,8 +292,8 @@ export const RestaurantPage = ({ restaurant, onBack }: Props) => {
               <img
                 src={
                   restaurant.vegNonveg === "veg"
-                    ? "../../dist/assets/veg.png"
-                    : "../../dist/assets/nonveg.png"
+                    ? "../../public/assets/veg.png"
+                    : "../../public/assets/nonveg.png"
                 }
                 alt={restaurant.vegNonveg}
                 onError={(e) => {
@@ -377,8 +377,8 @@ export const RestaurantPage = ({ restaurant, onBack }: Props) => {
                         <img
                           src={
                             restaurant.vegNonveg === "veg"
-                              ? "../../dist/assets/veg.png"
-                              : "../../dist/assets/nonveg.png"
+                              ? "../../public/assets/veg.png"
+                              : "../../public/assets/nonveg.png"
                           }
                           alt={restaurant.vegNonveg}
                           onError={(e) => {
@@ -449,8 +449,8 @@ export const RestaurantPage = ({ restaurant, onBack }: Props) => {
                         <img
                           src={
                             restaurant.vegNonveg === "veg"
-                              ? "../../dist/assets/veg.png"
-                              : "../../dist/assets/nonveg.png"
+                              ? "../../public/assets/veg.png"
+                              : "../../public/assets/nonveg.png"
                           }
                           alt={restaurant.vegNonveg}
                           onError={(e) => {
@@ -560,8 +560,8 @@ export const RestaurantPage = ({ restaurant, onBack }: Props) => {
                         <img
                           src={
                             restaurant.vegNonveg === "veg"
-                              ? "../../dist/assets/veg.png"
-                              : "../../dist/assets/nonveg.png"
+                              ? "../../public/assets/veg.png"
+                              : "../../public/assets/nonveg.png"
                           }
                           alt={restaurant.vegNonveg}
                           onError={(e) => {

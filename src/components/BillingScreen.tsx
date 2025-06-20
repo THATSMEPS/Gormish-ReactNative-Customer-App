@@ -407,8 +407,8 @@ export const BillingScreen = ({
                           <img
                             src={
                               restaurant.vegNonveg === "veg"
-                                ? "../../dist/assets/veg.png" // Yahan apni veg image ka URL paste karo
-                                : "../../dist/assets/nonveg.png" // Yahan apni non-veg image ka URL paste karo
+                                ? "../../public/assets/veg.png" // Yahan apni veg image ka URL paste karo
+                                : "../../public/assets/nonveg.png" // Yahan apni non-veg image ka URL paste karo
                             }
                             alt={restaurant.vegNonveg}
                             // Optional: Agar image load na ho toh fallback placeholder image
