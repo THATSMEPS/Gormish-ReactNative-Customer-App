@@ -111,11 +111,21 @@ export const Signup = ({ onSignupSuccess, onCancel, isOpen }: SignupProps) => {
       // const idToken = await result.user.getIdToken();
 
       // Complete registration
+      const body = {
+        name,
+        email,
+        phone: countryCode + phone,}
+        console.log('body', body);
+        console.log('string body', JSON.stringify(body));
+
       const registerResponse = await fetch(`${API_BASE_URL}/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, formattedPhone: countryCode + phone }),
+        
+        body : JSON.stringify(body)
+        // body: { name, email, formattedPhone: countryCode + phone },
       });
+     
       const registerData = await registerResponse.json();
       if (registerResponse.ok && registerData.success) {
         onSignupSuccess();
