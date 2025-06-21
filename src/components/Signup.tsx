@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { auth } from '../firebase';
@@ -116,42 +115,46 @@ export const Signup = ({ onSignupSuccess, onCancel, isOpen, initialPhone }: Sign
     }
     setIsLoading(true);
     try {
-      // const result = await confirmationResult.confirm(otp);
-      // const idToken = await result.user.getIdToken();
+      // 1. Verify OTP with Firebase
+      const result = await confirmationResult.confirm(otp);
+      const idToken = await result.user.getIdToken();
 
-      // Complete registration
+      // 2. Register user in DB
       const formattedPhone = countryCode + phone;
-
       const body = {
         name,
         email,
-        phone: formattedPhone,}
-        console.log('body', body);
-        console.log('string body', JSON.stringify(body));
-
+        phone: formattedPhone,
+      };
       const registerResponse = await fetch(`${API_BASE_URL}/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        
-        body : JSON.stringify(body)
-        // body: { name, email, formattedPhone: countryCode + phone },
+        body: JSON.stringify(body),
       });
-     
       const registerData = await registerResponse.json();
-      if (registerResponse.ok && registerData.success) {
-        if (registerData.data && registerData.data.session && registerData.data.session.authToken && registerData.data.user) {
-          onSignupSuccess({
-            authToken: registerData.data.session.authToken,
-            user: registerData.data.user,
-          });
-        } else {
-          setErrorMessage('Registration succeeded but missing user data.');
-        }
-      } else {
+      if (!registerResponse.ok || !registerData.success || !registerData.data || !registerData.data.user) {
         setErrorMessage(registerData.message || 'Registration failed. Please try again.');
+        setIsLoading(false);
+        return;
+      }
+
+      // 3. Get auth token/session by verifying Firebase token
+      const verifyResponse = await fetch(`${API_BASE_URL}/auth/verify-firebase-token`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ idToken }),
+      });
+      const verifyData = await verifyResponse.json();
+      if (verifyResponse.ok && verifyData.success && verifyData.data && verifyData.data.session && verifyData.data.session.authToken && verifyData.data.user) {
+        onSignupSuccess({
+          authToken: verifyData.data.session.authToken,
+          user: verifyData.data.user,
+        });
+      } else {
+        setErrorMessage(verifyData.message || 'Signup succeeded but login failed. Please try logging in.');
       }
     } catch (error: any) {
-      setErrorMessage(error.message || 'OTP verification failed. Please try again.');
+      setErrorMessage(error.message || 'OTP verification or signup failed. Please try again.');
     } finally {
       setIsLoading(false);
     }
