@@ -185,22 +185,22 @@ export const LoginPopup = ({ isOpen, onClose, onSignupClick }: Props) => {
               <div className="space-y-4 flex flex-col items-center">
                 {!otpSent ? (
                   <>
-                    <div className="flex items-center w-full max-w-sm mb-3 rounded-full border border-gray-300 focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-indigo-500 overflow-hidden bg-white">
-                      <select
-                        value={countryCode}
-                        onChange={(e) => setCountryCode(e.target.value)}
-                        className="bg-white text-black rounded-l-full px-4 py-2 outline-none cursor-pointer border-r border-gray-300"
-                        aria-label="Select country code"
-                      >
-                        <option value="+91">🇮🇳 +91</option>
-                      </select>
+                    <div className="flex items-center w-full max-w-sm mb-3 rounded-[30px] border border-white/30 bg-white/10 overflow-hidden focus-within:ring-2 focus-within:ring-[#6552FF] focus-within:border-[#6552FF]">
+<select
+  value={countryCode}
+  onChange={(e) => setCountryCode(e.target.value)}
+  className="bg-white/10 text-white rounded-l-[30px] px-4 h-12 py-2 outline-none cursor-pointer border-r border-white/10"
+  aria-label="Select country code"
+>
+  <option value="+91">🇮🇳 +91</option>
+</select>
                       <input
                         type="text"
                         placeholder="Phone Number"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
                         maxLength={10}
-                        className="flex-grow p-2 rounded-r-full border-none text-black focus:outline-none"
+                        className="flex-grow p-3 h-12 rounded-r-[30px] border-none bg-white/10 placeholder-white/70 text-white focus:outline-none"
                       />
                     </div>
                     {errorMessage && (
@@ -211,7 +211,7 @@ export const LoginPopup = ({ isOpen, onClose, onSignupClick }: Props) => {
                     <button
                       onClick={handleSendOtp}
                       disabled={isLoading}
-                      className="w-1/2 mx-auto bg-indigo-600 text-white py-2 rounded-full hover:bg-indigo-700 disabled:opacity-50 transition-colors duration-200"
+                      className="w-1/2 mx-auto bg-white text-[#6552FF] py-3 rounded-[30px] font-semibold hover:bg-white/90 disabled:opacity-50 transition-colors duration-200"
                     >
                       {isLoading ? 'Sending OTP...' : 'Send OTP'}
                     </button>
@@ -268,7 +268,7 @@ export const LoginPopup = ({ isOpen, onClose, onSignupClick }: Props) => {
                     <button
                       onClick={handleVerifyOtp}
                       disabled={isLoading}
-                      className="w-1/2 mx-auto bg-indigo-600 text-white py-2 rounded-full hover:bg-indigo-700 disabled:opacity-50"
+                      className="w-1/2 mx-auto bg-white text-[#6552FF] py-3 rounded-[30px] font-semibold hover:bg-white/90 disabled:opacity-50 transition-colors duration-200"
                     >
                       {isLoading ? 'Verifying OTP...' : 'Verify OTP'}
                     </button>
