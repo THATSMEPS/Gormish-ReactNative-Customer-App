@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { auth } from '../firebase';
@@ -18,6 +19,7 @@ export const Signup = ({ onSignupSuccess, onCancel, isOpen }: SignupProps) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
+  const [countryCode, setCountryCode] = useState('+91');
   const [otpSent, setOtpSent] = useState(false);
   const [otp, setOtp] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -77,7 +79,7 @@ export const Signup = ({ onSignupSuccess, onCancel, isOpen }: SignupProps) => {
           return;
         }
         const appVerifier = recaptchaVerifierRef.current;
-        const formattedPhone = '+91' + phone;
+        const formattedPhone = countryCode + phone;
         const result = await signInWithPhoneNumber(auth, formattedPhone, appVerifier);
         setConfirmationResult(result);
         setOtpSent(true);
@@ -112,7 +114,7 @@ export const Signup = ({ onSignupSuccess, onCancel, isOpen }: SignupProps) => {
       const registerResponse = await fetch(`${API_BASE_URL}/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, formattedPhone: phone}),
+        body: JSON.stringify({ name, email, formattedPhone: countryCode + phone }),
       });
       const registerData = await registerResponse.json();
       if (registerResponse.ok && registerData.success) {
@@ -165,6 +167,24 @@ export const Signup = ({ onSignupSuccess, onCancel, isOpen }: SignupProps) => {
                 <div className="space-y-6 flex flex-col items-center">
                   {!otpSent ? (
                     <>
+                      <div className="flex items-center w-full max-w-sm mb-3 rounded-full border border-gray-300 focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-indigo-500 overflow-hidden bg-white">
+                        <select
+                          value={countryCode}
+                          onChange={(e) => setCountryCode(e.target.value)}
+                          className="bg-white text-black rounded-l-full px-4 py-2 outline-none cursor-pointer border-r border-gray-300"
+                          aria-label="Select country code"
+                        >
+                          <option value="+91">🇮🇳 +91</option>
+                        </select>
+                        <input
+                          type="text"
+                          placeholder="Phone Number"
+                          value={phone}
+                          onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
+                          maxLength={10}
+                          className="flex-grow p-2 rounded-r-full border-none text-black focus:outline-none"
+                        />
+                      </div>
                       <input
                         type="text"
                         placeholder="Name"
@@ -177,14 +197,6 @@ export const Signup = ({ onSignupSuccess, onCancel, isOpen }: SignupProps) => {
                         placeholder="Email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="w-full mb-3 p-2 rounded-full border border-gray-300 text-black focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                      />
-                      <input
-                        type="text"
-                        placeholder="Phone Number"
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
-                        maxLength={10}
                         className="w-full mb-3 p-2 rounded-full border border-gray-300 text-black focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                       />
                       {errorMessage && <p className="text-red-500 mb-3">{errorMessage}</p>}
@@ -205,14 +217,35 @@ export const Signup = ({ onSignupSuccess, onCancel, isOpen }: SignupProps) => {
                   ) : (
                     <>
                       <p className="mb-3">Enter the 6-digit OTP sent to {email}</p>
-                      <input
-                        type="text"
-                        placeholder="Enter OTP"
-                        value={otp}
-                        onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                        maxLength={6}
-                        className="w-full mb-3 p-2 border-b-2 border-gray-400 text-black text-center tracking-widest text-lg focus:outline-none focus:border-indigo-600 bg-transparent"
-                      />
+                      <div className="flex justify-center space-x-4 mb-3">
+                        {[...Array(6)].map((_, index) => (
+                          <input
+                            key={index}
+                            type="text"
+                            inputMode="numeric"
+                            maxLength={1}
+                            className="w-10 border-b-2 border-white/70 bg-transparent text-black text-center text-lg focus:outline-none focus:border-indigo-600"
+                            value={otp[index] || ''}
+                            onChange={(e) => {
+                              const val = e.target.value.replace(/\D/g, '');
+                              if (!val) return;
+                              const newOtp = otp.split('');
+                              newOtp[index] = val[0];
+                              setOtp(newOtp.join('').slice(0, 6));
+                              // Move focus to next input
+                              const nextInput = e.target.nextElementSibling as HTMLInputElement | null;
+                              if (nextInput) nextInput.focus();
+                            }}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Backspace' && !otp[index] && index > 0) {
+                                const target = e.target as HTMLInputElement;
+                                const prevInput = target.previousElementSibling as HTMLInputElement | null;
+                                if (prevInput) prevInput.focus();
+                              }
+                            }}
+                          />
+                        ))}
+                      </div>
                       {errorMessage && <p className="text-red-500 mb-3">{errorMessage}</p>}
                       <button
                         onClick={handleVerifyOtp}
