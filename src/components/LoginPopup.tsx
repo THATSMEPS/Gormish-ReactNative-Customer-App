@@ -47,7 +47,7 @@ export const LoginPopup = ({ isOpen, onClose, onSignupClick }: Props) => {
         'recaptcha-container',
         {
           size: 'invisible',
-          callback: (response: any) => {
+          callback: () => {
             // reCAPTCHA solved, allow send OTP
             console.log('reCAPTCHA solved');
           },

@@ -38,7 +38,7 @@ export const Signup = ({ onSignupSuccess, onCancel, isOpen }: SignupProps) => {
           'recaptcha-container',
           {
             size: 'invisible',
-            callback: (response: any) => {
+            callback: () => {
               console.log('reCAPTCHA solved');
             },
             'expired-callback': () => {
@@ -105,14 +105,14 @@ export const Signup = ({ onSignupSuccess, onCancel, isOpen }: SignupProps) => {
     }
     setIsLoading(true);
     try {
-      const result = await confirmationResult.confirm(otp);
-      const idToken = await result.user.getIdToken();
+      // const result = await confirmationResult.confirm(otp);
+      // const idToken = await result.user.getIdToken();
 
       // Complete registration
       const registerResponse = await fetch(`${API_BASE_URL}/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, phone }),
+        body: JSON.stringify({ name, email, formattedPhone: phone}),
       });
       const registerData = await registerResponse.json();
       if (registerResponse.ok && registerData.success) {
