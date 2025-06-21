@@ -77,7 +77,8 @@ export const LoginPopup = ({ isOpen, onClose, onSignupClick }: Props) => {
     try {
       // Check if phone exists
       const formattedPhone = countryCode + phone;
-      const response = await fetch(`${API_BASE_URL}/auth/phoneexist?phone=${formattedPhone}`);
+      const encodedPhone = encodeURIComponent(formattedPhone);
+      const response = await fetch(`${API_BASE_URL}/auth/phoneexist?phone=${encodedPhone}`);
       const data = await response.json();
       if (data.success && data.data && data.data.phone_exist === true) {
         // Send OTP via Firebase
