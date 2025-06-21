@@ -95,11 +95,10 @@ export const Navbar = ({ onLocationClick, onProfileClick, onTrackOrder, selected
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
-          className="h-[30px] w-[30px] bg-white rounded-full flex items-center justify-center shadow-sm cursor-pointer"
+          className="h-[30px] w-[30px] bg-[#6552FF] rounded-full flex items-center justify-center shadow-sm cursor-pointer"
           onClick={onProfileClick}
         >
-          {/* ✅ Use the state variable here */}
-          <span className="text-lg font-semibold">{customerNameFirstLetter}</span>
+          <span className="text-lg font-semibold text-white">{customerNameFirstLetter}</span>
         </motion.div>
       </div>
     </div>
