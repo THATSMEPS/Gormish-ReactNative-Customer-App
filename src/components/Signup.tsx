@@ -112,10 +112,12 @@ export const Signup = ({ onSignupSuccess, onCancel, isOpen }: SignupProps) => {
       // const idToken = await result.user.getIdToken();
 
       // Complete registration
+      const formattedPhone = countryCode + phone;
+
       const body = {
         name,
         email,
-        phone: phone,}
+        phone: formattedPhone,}
         console.log('body', body);
         console.log('string body', JSON.stringify(body));
 

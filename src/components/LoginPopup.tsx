@@ -76,14 +76,14 @@ export const LoginPopup = ({ isOpen, onClose, onSignupClick }: Props) => {
     setIsLoading(true);
     try {
       // Check if phone exists
-      // const formattedPhone = countryCode + phone;
-      const response = await fetch(`${API_BASE_URL}/auth/phoneexist?phone=${phone}`);
+      const formattedPhone = countryCode + phone;
+      const response = await fetch(`${API_BASE_URL}/auth/phoneexist?phone=${formattedPhone}`);
       const data = await response.json();
       if (data.success && data.data && data.data.phone_exist === true) {
         // Send OTP via Firebase
         const appVerifier = window.recaptchaVerifier;
         // const formattedPhone = countryCode + phone; // Adjust country code as needed
-        const result = await signInWithPhoneNumber(auth, phone, appVerifier);
+        const result = await signInWithPhoneNumber(auth, formattedPhone, appVerifier);
         setConfirmationResult(result);
         setOtpSent(true);
       } else if (data.success && data.data && data.data.phone_exist === false) {
