@@ -69,8 +69,8 @@ export const Signup = ({ onSignupSuccess, onCancel, isOpen }: SignupProps) => {
     setIsLoading(true);
     try {
       // Check if phone exists
-      // const formattedPhone = countryCode + phone;
-      const response = await fetch(`${API_BASE_URL}/auth/phoneexist?phone=${phone}`);
+      const formattedPhone = countryCode + phone;
+      const response = await fetch(`${API_BASE_URL}/auth/phoneexist?phone=${formattedPhone}`);
       const data = await response.json();
       if (data.success && data.data && data.data.phone_exist === false) {
         // Send OTP via Firebase SDK
@@ -81,7 +81,7 @@ export const Signup = ({ onSignupSuccess, onCancel, isOpen }: SignupProps) => {
         }
         const appVerifier = recaptchaVerifierRef.current;
         // const formattedPhone = countryCode + phone;
-        const result = await signInWithPhoneNumber(auth, phone, appVerifier);
+        const result = await signInWithPhoneNumber(auth, formattedPhone, appVerifier);
         setConfirmationResult(result);
         setOtpSent(true);
       } else if (data.success && data.data && data.data.phone_exist === true) {
