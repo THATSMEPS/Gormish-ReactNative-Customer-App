@@ -69,7 +69,7 @@ export const Signup = ({ onSignupSuccess, onCancel, isOpen }: SignupProps) => {
     setIsLoading(true);
     try {
       // Check if phone exists
-      const response = await fetch(`${API_BASE_URL}/auth/phoneexist?phone=${phone}`);
+      const response = await fetch(`${API_BASE_URL}/auth/phoneexist?phone=${countryCode + phone}`);
       const data = await response.json();
       if (data.success && data.data && data.data.phone_exist === false) {
         // Send OTP via Firebase SDK
