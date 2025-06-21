@@ -275,7 +275,7 @@ export const OrderTrackingScreen = ({}: Props) => {
             <p className="text-sm text-gray-500">Restaurant Manager</p>
           </div>
           <motion.a
-            href={`tel:+91${order.restaurant.mobile}`}
+            href={`tel:91${order.restaurant.mobile}`}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className="w-10 h-10 bg-[#6552FF] rounded-full flex items-center justify-center"
@@ -293,7 +293,7 @@ export const OrderTrackingScreen = ({}: Props) => {
             <p className="text-sm text-gray-500">Feel free to raise issues</p>
           </div>
           <motion.a
-            href="tel:+919408393005"
+            href="tel:919408393005"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className="w-10 h-10 bg-[#6552FF] rounded-full flex items-center justify-center"

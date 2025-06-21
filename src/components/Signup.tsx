@@ -19,7 +19,7 @@ export const Signup = ({ onSignupSuccess, onCancel, isOpen }: SignupProps) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
-  const [countryCode, setCountryCode] = useState('+91');
+  const [countryCode, setCountryCode] = useState('91');
   const [otpSent, setOtpSent] = useState(false);
   const [otp, setOtp] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -185,7 +185,7 @@ export const Signup = ({ onSignupSuccess, onCancel, isOpen }: SignupProps) => {
                           className="bg-white text-black rounded-l-full px-4 py-2 outline-none cursor-pointer border-r border-gray-300"
                           aria-label="Select country code"
                         >
-                          <option value="+91">🇮🇳 +91</option>
+                          <option value="91">🇮🇳 +91</option>
                         </select>
                         <input
                           type="text"
