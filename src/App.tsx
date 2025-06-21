@@ -508,6 +508,7 @@ function MainApp({ customerId, isAuthenticated, showLoginPopup, setShowLoginPopu
               setIsAuthenticated(true);
               setCurrentCustomerId(userData.user.id || null);
               setSignupInitialPhone(''); // Clear after successful signup
+              setShowLocationPopup(true); // Auto open location popup after signup
             }}
             onCancel={() => {
               setShowSignupPopup(false);
