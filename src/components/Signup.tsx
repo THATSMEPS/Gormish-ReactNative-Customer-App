@@ -109,7 +109,7 @@ export const Signup = ({ onSignupSuccess, onCancel, isOpen }: SignupProps) => {
       const idToken = await result.user.getIdToken();
 
       // Complete registration
-      const registerResponse = await fetch(`${API_BASE_URL}/register`, {
+      const registerResponse = await fetch(`${API_BASE_URL}/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, phone }),
