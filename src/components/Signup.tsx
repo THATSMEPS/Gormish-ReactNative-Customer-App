@@ -255,7 +255,7 @@ export const Signup = ({ onSignupSuccess, onCancel, isOpen, initialPhone }: Sign
                             type="text"
                             inputMode="numeric"
                             maxLength={1}
-                            className="w-10 border-b-2 border-white/70 bg-transparent text-black text-center text-lg focus:outline-none focus:border-indigo-600"
+                            className="w-10 border-b-2 border-white/70 bg-transparent text-white text-center text-lg focus:outline-none focus:border-indigo-600"
                             value={otp[index] || ''}
                             onChange={(e) => {
                               const val = e.target.value.replace(/\D/g, '');
