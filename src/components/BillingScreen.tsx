@@ -1,5 +1,3 @@
-
-
 import { motion } from "framer-motion";
 import { ArrowLeft, MapPin, Minus, Plus } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
@@ -407,11 +405,10 @@ export const BillingScreen = ({
                           <img
                             src={
                               restaurant.vegNonveg === "veg"
-                                ? "../../public/assets/veg.png" // Yahan apni veg image ka URL paste karo
-                                : "../../public/assets/nonveg.png" // Yahan apni non-veg image ka URL paste karo
+                                ? "/assets/veg.png"
+                                : "/assets/nonveg.png"
                             }
                             alt={restaurant.vegNonveg}
-                            // Optional: Agar image load na ho toh fallback placeholder image
                             onError={(e) => {
                               e.currentTarget.src =
                                 "https://placehold.co/24x24/cccccc/333333?text=Error";
