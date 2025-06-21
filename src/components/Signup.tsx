@@ -8,7 +8,7 @@ import { RecaptchaVerifier, signInWithPhoneNumber } from 'firebase/auth';
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
 
 interface SignupProps {
-  onSignupSuccess: () => void;
+  onSignupSuccess: (userData: { authToken: string; user: any }) => void;
   onCancel: () => void;
   isOpen?: boolean;
 };
@@ -132,7 +132,14 @@ export const Signup = ({ onSignupSuccess, onCancel, isOpen }: SignupProps) => {
      
       const registerData = await registerResponse.json();
       if (registerResponse.ok && registerData.success) {
-        onSignupSuccess();
+        if (registerData.data && registerData.data.session && registerData.data.session.authToken && registerData.data.user) {
+          onSignupSuccess({
+            authToken: registerData.data.session.authToken,
+            user: registerData.data.user,
+          });
+        } else {
+          setErrorMessage('Registration succeeded but missing user data.');
+        }
       } else {
         setErrorMessage(registerData.message || 'Registration failed. Please try again.');
       }

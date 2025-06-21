@@ -489,9 +489,16 @@ function MainApp({ customerId, isAuthenticated, showLoginPopup, setShowLoginPopu
       )}
       {showSignupPopup && (
         <Signup
-          onSignupSuccess={() => {
+          onSignupSuccess={(userData: { authToken: string; user: any }) => {
+            localStorage.setItem('authToken', userData.authToken);
+            localStorage.setItem('customerData', JSON.stringify(userData.user));
+            if (userData.user.id) {
+              localStorage.setItem('customerId', userData.user.id);
+            }
             setShowSignupPopup(false);
-            setShowLoginPopup(true);
+            setShowLoginPopup(false);
+            setIsAuthenticated(true);
+            setCurrentCustomerId(userData.user.id || null);
           }}
           onCancel={() => {
             setShowSignupPopup(false);
@@ -511,7 +518,7 @@ function AuthenticatedApp() {
   const [currentCustomerId, setCurrentCustomerId] = useState<string | null>(null);
 
   const location = useLocation();
-  const embedded = new URLSearchParams(location.search).get('embedded') === 'true';
+  // const embedded = new URLSearchParams(location.search).get('embedded') === 'true';
 
   useEffect(() => {
     const checkAuthToken = () => {
