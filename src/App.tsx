@@ -370,6 +370,9 @@ function MainApp({ customerId, isAuthenticated, showLoginPopup, setShowLoginPopu
     }
   }, [customerId, selectedArea]);
 
+  // Add signupInitialPhone state
+  const [signupInitialPhone, setSignupInitialPhone] = useState<string>('');
+
   return (
     <div className="relative min-h-screen">
       {/* Main page content */}
@@ -484,29 +487,36 @@ function MainApp({ customerId, isAuthenticated, showLoginPopup, setShowLoginPopu
               setShowLoginPopup(false);
               setShowSignupPopup(true);
             }}
+            onNavigateToSignup={(phone: string) => {
+              setShowLoginPopup(false);
+              setShowSignupPopup(true);
+              setSignupInitialPhone(phone);
+            }}
           />
         </>
       )}
-      {showSignupPopup && (
-        <Signup
-          onSignupSuccess={(userData: { authToken: string; user: any }) => {
-            localStorage.setItem('authToken', userData.authToken);
-            localStorage.setItem('customerData', JSON.stringify(userData.user));
-            if (userData.user.id) {
-              localStorage.setItem('customerId', userData.user.id);
-            }
-            setShowSignupPopup(false);
-            setShowLoginPopup(false);
-            setIsAuthenticated(true);
-            setCurrentCustomerId(userData.user.id || null);
-          }}
-          onCancel={() => {
-            setShowSignupPopup(false);
-            setShowLoginPopup(true);
-          }}
-          isOpen={showSignupPopup}
-        />
-      )}
+        {showSignupPopup && (
+          <Signup
+            onSignupSuccess={(userData: { authToken: string; user: any }) => {
+              localStorage.setItem('authToken', userData.authToken);
+              localStorage.setItem('customerData', JSON.stringify(userData.user));
+              if (userData.user.id) {
+                localStorage.setItem('customerId', userData.user.id);
+              }
+              setShowSignupPopup(false);
+              setShowLoginPopup(false);
+              setIsAuthenticated(true);
+              setCurrentCustomerId(userData.user.id || null);
+              setSignupInitialPhone(''); // Clear after successful signup
+            }}
+            onCancel={() => {
+              setShowSignupPopup(false);
+              setShowLoginPopup(true);
+            }}
+            isOpen={showSignupPopup}
+            initialPhone={signupInitialPhone}
+          />
+        )}
     </div>
   );
 }

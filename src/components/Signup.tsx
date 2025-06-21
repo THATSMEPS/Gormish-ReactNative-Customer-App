@@ -11,9 +11,10 @@ interface SignupProps {
   onSignupSuccess: (userData: { authToken: string; user: any }) => void;
   onCancel: () => void;
   isOpen?: boolean;
+  initialPhone?: string;
 };
 
-export const Signup = ({ onSignupSuccess, onCancel, isOpen }: SignupProps) => {
+export const Signup = ({ onSignupSuccess, onCancel, isOpen, initialPhone }: SignupProps) => {
   if (!isOpen) return null;
 
   const [name, setName] = useState('');
@@ -59,6 +60,12 @@ export const Signup = ({ onSignupSuccess, onCancel, isOpen }: SignupProps) => {
       }
     };
   }, [isOpen]);
+  
+  useEffect(() => {
+    if (isOpen && initialPhone) {
+      setPhone(initialPhone);
+    }
+  }, [isOpen, initialPhone]);
 
   const handleSendOtp = async () => {
     setErrorMessage('');

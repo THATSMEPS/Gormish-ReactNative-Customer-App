@@ -16,12 +16,13 @@ interface Props {
   isOpen: boolean;
   onClose: () => void;
   onSignupClick: () => void;
+  onNavigateToSignup: (phone: string) => void;
   embedded?: boolean;
 }
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://gormishbackend.onrender.com/api';
 
-export const LoginPopup = ({ isOpen, onClose, onSignupClick }: Props) => {
+export const LoginPopup = ({ isOpen, onClose, onSignupClick, onNavigateToSignup }: Props) => {
   const [phone, setPhone] = useState('');
   const [countryCode, setCountryCode] = useState('+91');
   const [otpSent, setOtpSent] = useState(false);
@@ -83,12 +84,13 @@ export const LoginPopup = ({ isOpen, onClose, onSignupClick }: Props) => {
       if (data.success && data.data && data.data.phone_exist === true) {
         // Send OTP via Firebase
         const appVerifier = window.recaptchaVerifier;
-        // const formattedPhone = countryCode + phone; // Adjust country code as needed
         const result = await signInWithPhoneNumber(auth, formattedPhone, appVerifier);
         setConfirmationResult(result);
         setOtpSent(true);
       } else if (data.success && data.data && data.data.phone_exist === false) {
-        setErrorMessage('Phone number not registered. Please signup first.');
+        // Instead of just showing error, navigate to signup popup with phone pre-filled
+        onNavigateToSignup(phone);
+        return;
       } else {
         setErrorMessage('Failed to check phone number. Please try again.');
       }
