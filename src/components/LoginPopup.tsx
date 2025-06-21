@@ -23,7 +23,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://gormishbacken
 
 export const LoginPopup = ({ isOpen, onClose, onSignupClick }: Props) => {
   const [phone, setPhone] = useState('');
-  const [countryCode, setCountryCode] = useState('91');
+  const [countryCode, setCountryCode] = useState('+91');
   const [otpSent, setOtpSent] = useState(false);
   const [otp, setOtp] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -76,14 +76,14 @@ export const LoginPopup = ({ isOpen, onClose, onSignupClick }: Props) => {
     setIsLoading(true);
     try {
       // Check if phone exists
-      const formattedPhone = countryCode + phone;
-      const response = await fetch(`${API_BASE_URL}/auth/phoneexist?phone=${formattedPhone}`);
+      // const formattedPhone = countryCode + phone;
+      const response = await fetch(`${API_BASE_URL}/auth/phoneexist?phone=${phone}`);
       const data = await response.json();
       if (data.success && data.data && data.data.phone_exist === true) {
         // Send OTP via Firebase
         const appVerifier = window.recaptchaVerifier;
-        const formattedPhone = countryCode + phone; // Adjust country code as needed
-        const result = await signInWithPhoneNumber(auth, formattedPhone, appVerifier);
+        // const formattedPhone = countryCode + phone; // Adjust country code as needed
+        const result = await signInWithPhoneNumber(auth, phone, appVerifier);
         setConfirmationResult(result);
         setOtpSent(true);
       } else if (data.success && data.data && data.data.phone_exist === false) {
@@ -191,7 +191,7 @@ export const LoginPopup = ({ isOpen, onClose, onSignupClick }: Props) => {
                         className="bg-white text-black rounded-l-full px-4 py-2 outline-none cursor-pointer border-r border-gray-300"
                         aria-label="Select country code"
                       >
-                        <option value="91">🇮🇳 +91</option>
+                        <option value="+91">🇮🇳 +91</option>
                       </select>
                       <input
                         type="text"
