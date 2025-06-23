@@ -1,10 +1,13 @@
-import React from 'react';
 import { SafeAreaView, StyleSheet } from 'react-native';
 import { WebView } from 'react-native-webview';
 
 const VERCEL_URL = 'https://gormish-customer.vercel.app/'; // <-- Replace with your actual Vercel URL
 
-export default function App() {
+export const screenOptions = {
+  headerShown: false,
+};
+
+export default function Index() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <WebView
@@ -26,4 +29,4 @@ const styles = StyleSheet.create({
   webview: {
     flex: 1,
   },
-}); 
+});
