@@ -1,4 +1,6 @@
+import Constants from 'expo-constants';
 import * as Location from 'expo-location';
+import * as Notifications from 'expo-notifications';
 import { useEffect, useRef, useState } from 'react';
 import { BackHandler, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -11,10 +13,38 @@ export const screenOptions = {
   gestureEnabled: false, // Disable swipe back gesture
 };
 
+// Register for push notifications and send token to backend
+async function registerForPushNotificationsAsync(customerId) {
+  let token;
+  if (Constants.isDevice) {
+    const { status: existingStatus } = await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+    if (existingStatus !== 'granted') {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+    if (finalStatus !== 'granted') {
+      alert('Failed to get push token for push notification!');
+      return;
+    }
+    token = (await Notifications.getExpoPushTokenAsync()).data;
+    // Send token to your backend
+    await fetch('https://your-backend.com/api/customers/storeToken', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ customerId, expoPushToken: token }),
+    });
+  } else {
+    alert('Must use physical device for Push Notifications');
+  }
+  return token;
+}
+
 export default function Index() {
   const webViewRef = useRef(null);
   const [canGoBack, setCanGoBack] = useState(false);
   const [hasLocationPermission, setHasLocationPermission] = useState(false);
+  const [customerId, setCustomerId] = useState(null);
 
   // Request location permission on app start
   useEffect(() => {
@@ -28,11 +58,37 @@ export default function Index() {
     })();
   }, []);
 
+  // Register for push notifications and handle notification events
+  useEffect(() => {
+    if (customerId) {
+      registerForPushNotificationsAsync(customerId);
+    }
+
+    const notificationListener = Notifications.addNotificationReceivedListener(notification => {
+      // Optionally, forward notification to WebView or show custom UI
+      // Example: webViewRef.current.injectJavaScript(`window.dispatchEvent(new CustomEvent('orderStatusNotification', { detail: ${JSON.stringify(notification)} }));`);
+    });
+
+    const responseListener = Notifications.addNotificationResponseReceivedListener(response => {
+      // Optionally, handle notification tap (navigate, etc.)
+      // Example: webViewRef.current.injectJavaScript(`window.dispatchEvent(new CustomEvent('orderStatusNotificationTap', { detail: ${JSON.stringify(response)} }));`);
+    });
+
+    return () => {
+      notificationListener.remove();
+      responseListener.remove();
+    };
+  }, [customerId]);
+
   // Handle messages from the WebView
   const handleWebViewMessage = async (event) => {
     try {
       const message = JSON.parse(event.nativeEvent.data);
-      
+
+      // Handle customerId sent from WebView
+      if (message.customerId) {
+        setCustomerId(message.customerId);
+      }
       // Handle get location request
       if (message.type === 'GET_LOCATION') {
         if (!hasLocationPermission) {

@@ -16,6 +16,8 @@
         "foregroundImage": "./assets/images/GormishLogo.png",
         "backgroundColor": "#ffffff"
       },
+      "googleServicesFile": "./google-services.json",
+      "useNextNotificationsApi": true,
       "edgeToEdgeEnabled": true,
       "package": "com.gormish.GormishCustomer"
     },
