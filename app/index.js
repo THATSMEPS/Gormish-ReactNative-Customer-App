@@ -29,7 +29,7 @@ async function registerForPushNotificationsAsync(customerId) {
     }
     token = (await Notifications.getExpoPushTokenAsync()).data;
     // Send token to your backend
-    await fetch('https://your-backend.com/api/customers/storeToken', {
+    await fetch('https://gormishbackend-4jlj.onrender.com/api/customers/storeToken', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ customerId, expoPushToken: token }),
