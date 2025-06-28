@@ -335,6 +335,44 @@ export default function Index() {
     (function() {
       console.log("Setting up location bridge between React Native and WebView");
       window.isInReactNativeApp = true;
+
+      document.addEventListener('DOMContentLoaded', function() {
+        // Add meta viewport tag to disable zoom
+        var metaTag = document.createElement('meta');
+        metaTag.name = 'viewport';
+        metaTag.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no';
+        document.getElementsByTagName('head')[0].appendChild(metaTag);
+        
+        // Disable zoom gestures
+        document.addEventListener('gesturestart', function (e) {
+          e.preventDefault();
+        }, false);
+        
+        document.addEventListener('gesturechange', function (e) {
+          e.preventDefault();
+        }, false);
+        
+        document.addEventListener('gestureend', function (e) {
+          e.preventDefault();
+        }, false);
+        
+        // Disable double-tap zoom
+        var lastTouchEnd = 0;
+        document.addEventListener('touchend', function (event) {
+          var now = (new Date()).getTime();
+          if (now - lastTouchEnd <= 300) {
+            event.preventDefault();
+          }
+          lastTouchEnd = now;
+        }, false);
+        
+        // Disable pinch zoom
+        document.addEventListener('touchmove', function (event) {
+          if (event.touches.length > 1) {
+            event.preventDefault();
+          }
+        }, { passive: false });
+      });
     })();
     true;
   `;
@@ -348,6 +386,11 @@ export default function Index() {
         javaScriptEnabled
         domStorageEnabled
         startInLoadingState
+        scalesPageToFit={false}
+        scrollEnabled={true}
+        bounces={false}
+        showsHorizontalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}
         injectedJavaScriptBeforeContentLoaded={injectedJavaScriptBeforeContentLoaded}
         onMessage={handleWebViewMessage}
         onNavigationStateChange={navState => setCanGoBack(navState.canGoBack)}
@@ -415,6 +458,18 @@ export default function Index() {
                 console.log("Location bridge set up between React Native and WebView");
                 window.locationBridgeSetup = true;
               }
+              
+              // Additional zoom prevention after page load
+              document.body.style.touchAction = 'pan-x pan-y';
+              document.body.style.msContentZooming = 'none';
+              document.body.style.msUserSelect = 'none';
+              document.body.style.webkitUserSelect = 'none';
+              
+              // Disable zoom with CSS
+              var style = document.createElement('style');
+              style.innerHTML = 'body { zoom: reset; -webkit-touch-callout: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; }';
+              document.head.appendChild(style);
+              
             })();
             true;
           `;
