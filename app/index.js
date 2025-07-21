@@ -23,7 +23,7 @@ if (Platform.OS === 'android') {
   });
 }
 
-const VERCEL_URL = 'https://gormish-customer.vercel.app/'; 
+const VERCEL_URL = 'https://gormish.in'; 
 export const screenOptions = {
   headerShown: false,
   gestureEnabled: false, 
